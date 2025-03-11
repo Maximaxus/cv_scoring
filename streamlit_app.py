@@ -2,10 +2,10 @@ import openai
 import streamlit as st
 from parse_hh import get_candidate_info, get_job_description
 
-# Указываем ключ OpenAI через st.secrets
+# Указываем API-ключ через st.secrets (безопасный способ)
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
-# Вывод версии openai
+# Вывод версии openai для отладки
 st.write("Текущая версия openai:", openai.__version__)
 
 SYSTEM_PROMPT = """
@@ -27,7 +27,7 @@ SYSTEM_PROMPT = """
    - Укажи общий уровень соответствия кандидата вакансии в процентах от 0% до 100%.
 
 Формат ответа:
-- Отвечай максимально сжато, не более 100 слов
+- Отвечай максимально сжато, не более 100 слов.
 - Короткое текстовое резюме (аналитический комментарий), где кратко изложены основные аргументы в пользу или против найма.
 - Отдельная оценка качества заполнения резюме.
 - Итоговый показатель в процентах (0–100), отражающий совокупную оценку кандидата.
@@ -36,15 +36,16 @@ SYSTEM_PROMPT = """
 def request_gpt(system_prompt, user_prompt):
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",  # Если нет доступа к GPT-4, замените на "gpt-3.5-turbo"
+            model="gpt-3.5-turbo",  # Или "gpt-4", если у вас есть к ней доступ
             messages=[
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt},
+                {"role": "user", "content": user_prompt}
             ],
             max_tokens=1000,
             temperature=0
         )
-        return response.choices[0].message["content"]
+        # Доступ к ответу через словарный ключ "message"
+        return response["choices"][0]["message"]["content"]
     except Exception as e:
         st.error(f"Ошибка при запросе к OpenAI: {e}")
         return None
@@ -66,7 +67,6 @@ if st.button("Score CV"):
 
         user_prompt = f"# ВАКАНСИЯ\n{job_description}\n\n# РЕЗЮМЕ\n{cv}"
         response = request_gpt(SYSTEM_PROMPT, user_prompt)
-
     if response:
         st.write("**Результат:**")
         st.write(response)
