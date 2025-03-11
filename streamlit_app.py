@@ -1,20 +1,12 @@
 import openai
 import streamlit as st
-
 from parse_hh import get_candidate_info, get_job_description
 
-# Указываем ключ OpenAI через st.secrets, это наиболее безопасный способ
+# Указываем ключ OpenAI через st.secrets
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
-# Выведем версию установленного openai
+# Вывод версии openai
 st.write("Текущая версия openai:", openai.__version__)
-
-def main():
-    st.title("Проверка версии openai")
-    # Остальной код, кнопки и т. д.
-
-if __name__ == "__main__":
-    main()
 
 SYSTEM_PROMPT = """
 Задача:
@@ -42,16 +34,20 @@ SYSTEM_PROMPT = """
 """.strip()
 
 def request_gpt(system_prompt, user_prompt):
-    response = openai.ChatCompletion.create(
-        model="gpt-4",  # Если нет доступа к gpt-4, замените на "gpt-3.5-turbo"
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt},
-        ],
-        max_tokens=1000,
-        temperature=0
-    )
-    return response.choices[0].message.content
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-4",  # Если нет доступа к GPT-4, замените на "gpt-3.5-turbo"
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            max_tokens=1000,
+            temperature=0
+        )
+        return response.choices[0].message["content"]
+    except Exception as e:
+        st.error(f"Ошибка при запросе к OpenAI: {e}")
+        return None
 
 st.title("CV Scoring App")
 
@@ -71,5 +67,6 @@ if st.button("Score CV"):
         user_prompt = f"# ВАКАНСИЯ\n{job_description}\n\n# РЕЗЮМЕ\n{cv}"
         response = request_gpt(SYSTEM_PROMPT, user_prompt)
 
-    st.write("**Результат:**")
-    st.write(response)
+    if response:
+        st.write("**Результат:**")
+        st.write(response)
