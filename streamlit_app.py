@@ -36,7 +36,7 @@ SYSTEM_PROMPT = """
 def request_gpt(system_prompt, user_prompt):
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-4",  # Если нет доступа к GPT-4, замените на "gpt-3.5-turbo"
+            model="gpt-3.5-turbo",  # Если нет доступа к GPT-4, замените на "gpt-3.5-turbo"
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt},
