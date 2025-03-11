@@ -24,9 +24,9 @@ def extract_vacancy_data(html):
     title = soup.find("h1", {"data-qa": "vacancy-title"}).text.strip()
 
     # Извлечение зарплат
-    salary = soup.find(
-        "span", {"data-qa": "vacancy-salary-compensation-type-net"}
-    ).text.strip()
+    # salary = soup.find(
+    #    "span", {"data-qa": "vacancy-salary-compensation-type-net"}
+    # ).text.strip()
 
     # Извлечение опыта работы
     experience = soup.find("span", {"data-qa": "vacancy-experience"}).text.strip()
