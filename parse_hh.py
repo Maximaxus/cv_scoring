@@ -23,7 +23,7 @@ def extract_vacancy_data(html):
     # Извлечение заголовка вакансии
     title = soup.find("h1", {"data-qa": "vacancy-title"}).text.strip()
 
-    # Извлечение зарплаты
+    # Извлечение зарплат
     salary = soup.find(
         "span", {"data-qa": "vacancy-salary-compensation-type-net"}
     ).text.strip()
