@@ -6,6 +6,16 @@ from parse_hh import get_candidate_info, get_job_description
 # Указываем ключ OpenAI через st.secrets, это наиболее безопасный способ
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
+# Выведем версию установленного openai
+st.write("Текущая версия openai:", openai.__version__)
+
+def main():
+    st.title("Проверка версии openai")
+    # Остальной код, кнопки и т. д.
+
+if __name__ == "__main__":
+    main()
+
 SYSTEM_PROMPT = """
 Задача:
 Оцени, насколько кандидат подходит для данной вакансии, учитывая его профессиональный опыт, навыки, соответствие требованиям и умение полно и чётко описывать свою работу.
